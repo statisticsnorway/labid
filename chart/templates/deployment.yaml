@@ -47,6 +47,17 @@ spec:
               value: {{ printf "/secret/%s" .Values.signingKey.fileName | quote }}
             - name: LABID_TEAM_API_URL
               value: {{ .Values.teamApi.baseUrl | quote }}
+            - name: LABID_API_IMPLEMENTATION
+              value: {{ .Values.apiImplementation | quote }}
+            - name: LABID_DAPLA_API_URL
+              value: {{ .Values.daplaApi.baseUrl | quote }}
+            - name: LABID_DAPLA_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.daplaApi.tokenSecretName | quote }}
+                  key: {{ .Values.daplaApi.tokenSecretKey | quote }}
+            - name: LABID_TEAM_API_URL
+              value: {{ .Values.teamApi.baseUrl | quote }}
             - name: LABID_TEAM_API_CLIENT_ID
               valueFrom:
                 secretKeyRef:
