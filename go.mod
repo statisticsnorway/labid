@@ -8,6 +8,7 @@ require (
 	github.com/go-chi/httplog/v2 v2.1.1
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.1.0
+	github.com/hasura/go-graphql-client v0.15.1
 	github.com/lestrrat-go/httprc/v3 v3.0.0-beta1
 	github.com/lestrrat-go/jwx/v3 v3.0.0-beta1
 	github.com/ogen-go/ogen v1.10.1
@@ -21,6 +22,7 @@ require (
 )
 
 require (
+	github.com/coder/websocket v1.8.13 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
