@@ -8,8 +8,7 @@ LabID provides an internal token-exchange service that swaps a Kubernetes
 service account token for a signed JWT (a "LabID token"). Summary:
 
 - Validates incoming Kubernetes tokens against a JWKS (Kubernetes/OpenID).
-- Maps service account / namespace to Dapla groups (via Dapla API or Team API
-   depending on configuration) and adds these as `dapla.group` / `dapla.groups`
+- Maps service account / namespace to Dapla groups (via Dapla API) and adds these as `dapla.group` / `dapla.groups`
    claims in the token.
 - Signs outgoing JWTs with a private RSA key and exposes the public part via
    `/jwks` so other services can validate the issued tokens.
@@ -30,7 +29,7 @@ pattern for the Dapla Lab environment. Primary motivations include:
 - Offer a compatible (but limited) token-exchange endpoint inspired by RFC8693,
    while simplifying and standardizing the workflow for internal services and
    clients.
-- Provide easy integration with existing user/group APIs (Dapla API or Team API)
+- Provide easy integration with existing user/group APIs (Dapla API)
    to populate appropriate claims in the token.
 
 This simplifies how internal services validate identity and permissions without
@@ -43,8 +42,7 @@ having to handle Kubernetes token rotation or distribute private signing keys.
    `DaplaGroupAnnotation`). If present and the requester asked for the
    `current_group` scope, LabID adds a `dapla.group` claim with that value.
 - **All-groups lookup:** when `all_groups` scope is requested, LabID calls either
-   the Dapla GraphQL API or the Team API client (chosen by the `API_IMPLEMENTATION`
-   environment variable) to populate a `dapla.groups` claim (an array of group
+   the Dapla GraphQL API to populate a `dapla.groups` claim (an array of group
    names).
 - **Username derivation:** the code expects user namespaces prefixed with
    `user-ssb-` (constant `UserNamespacePrefix`). The username is derived by
@@ -80,11 +78,6 @@ Example: all_groups flow
 1. LabID trims `user-ssb-kari` -> username `kari`.
 2. For `all_groups` scope LabID calls the configured API client which fetches
    groups for `kari@ssb.no` and adds them as a `dapla.groups` claim.
-
-Configuration note:
-
-- `API_IMPLEMENTATION` chooses the group provider: `dapla-api` (GraphQL client)
-   or `team-api` (HTTP client). See `cmd/main.go` for wiring.
 
 ## Usage
 
