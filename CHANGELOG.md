@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/statisticsnorway/labid/compare/v1.2.2...v1.3.0) (2026-11-19)
+
+
+### Features
+
+* remove dapla team api ([09ce6f3](https://github.com/statisticsnorway/labid/commit/09ce6f35c6e77764bf33d0552384e4578a35d3b7))
+
 ## [1.2.2](https://github.com/statisticsnorway/labid/compare/v1.2.1...v1.2.2) (2026-02-24)
 
 
