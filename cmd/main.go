@@ -11,7 +11,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/statisticsnorway/labid/internal/daplaapi"
@@ -24,7 +23,6 @@ import (
 	"github.com/lestrrat-go/httprc/v3"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 	api "github.com/statisticsnorway/labid/api/oas"
-	"github.com/statisticsnorway/labid/internal/teamapi"
 	"github.com/statisticsnorway/labid/internal/token"
 
 	"k8s.io/client-go/kubernetes"
@@ -36,14 +34,6 @@ type config struct {
 	JwksUri        string `env:"JWKS_URI,required,notEmpty"`
 	Port           string `env:"PORT" envDefault:"8080"`
 	PrivateKeyFile string `env:"PRIVATE_KEY_FILE,required,notEmpty,unset"`
-
-	// dapla-api or team-api
-	ApiImplementation string `env:"API_IMPLEMENTATION"`
-
-	TeamApiUrl          string `env:"TEAM_API_URL"`
-	TeamApiClientId     string `env:"TEAM_API_CLIENT_ID"`
-	TeamApiClientSecret string `env:"TEAM_API_CLIENT_SECRET"`
-	TeamApiTokenUrl     string `env:"TEAM_API_TOKEN_URL"`
 
 	DaplaApiUrl   string `env:"DAPLA_API_URL"`
 	DaplaApiToken string `env:"DAPLA_API_TOKEN"`
@@ -107,29 +97,15 @@ func main() {
 	thOpts := []token.ThOptsFunc{
 		token.WithCurrentGroupPopulator(token.CurrentGroupMapper(ctx, getSa)),
 	}
-	if strings.EqualFold(cfg.ApiImplementation, "team-api") {
-		thOpts = append(
-			thOpts,
-			token.WithAllGroupsPopulator(
-				teamapi.NewClient(
-					cfg.TeamApiUrl,
-					cfg.TeamApiTokenUrl,
-					cfg.TeamApiClientId,
-					cfg.TeamApiClientSecret,
-				).AllGroupsPopulator,
-			),
-		)
-	} else if strings.EqualFold(cfg.ApiImplementation, "dapla-api") {
-		thOpts = append(
-			thOpts,
-			token.WithAllGroupsPopulator(
-				daplaapi.NewClient(
-					cfg.DaplaApiUrl,
-					cfg.DaplaApiToken,
-				).AllGroupsPopulator,
-			),
-		)
-	}
+	thOpts = append(
+		thOpts,
+		token.WithAllGroupsPopulator(
+			daplaapi.NewClient(
+				cfg.DaplaApiUrl,
+				cfg.DaplaApiToken,
+			).AllGroupsPopulator,
+		),
+	)
 	tokenHandler, err := token.NewTokenHandler(
 		kubernetesTokenParser.Parse, signedJwtCreator,
 		thOpts...,
